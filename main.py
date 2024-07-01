@@ -39,7 +39,7 @@ def main():
         time.sleep(2)
 
     # Compare transactions in the pending block and finalized block
-    print(f"\nComparing transactions in pending block and finalized block (block number: {pending_block_number}):")
+    print(f"\nComparing txs in pending block and finalized block (block number: {pending_block_number}):")
     pending_block_tx_hashes = {tx.hex() for tx in pending_block.transactions}
     finalized_block_tx_hashes = {tx['hash'].hex() for tx in finalized_block.transactions}
 
@@ -47,9 +47,30 @@ def main():
     pending_only_txs = pending_block_tx_hashes - finalized_block_tx_hashes
     finalized_only_txs = finalized_block_tx_hashes - pending_block_tx_hashes
 
-    print(f"Common transactions: {len(common_txs)}")
-    print(f"Transactions only in pending block: {len(pending_only_txs)}")
-    print(f"Transactions only in finalized block: {len(finalized_only_txs)}")
+    print(f"\nTxs in pending block: {len(pending_block.transactions)}")
+    print(f"Txs in latest block: {len(finalized_block.transactions)}")
+
+    position_changes = {
+        "same_position": 0,
+        "higher_position": 0,
+        "lower_position": 0
+    }
+
+    for tx_hash in common_txs:
+        pending_index = [tx.hex() for tx in pending_block.transactions].index(tx_hash)
+        finalized_index = [tx['hash'].hex() for tx in finalized_block.transactions].index(tx_hash)
+
+        if pending_index == finalized_index:
+            position_changes["same_position"] += 1
+        elif pending_index > finalized_index:
+            position_changes["higher_position"] += 1
+        else:
+            position_changes["lower_position"] += 1
+
+    print(f"\nTxs with higher position in the latest: {position_changes['higher_position']}")
+    print(f"Txs with the same position in the latest: {position_changes['same_position']}")
+    print(f"Txs with lower position in the latest: {position_changes['lower_position']}")
+    print(f"Txs not included in the latest: {len(pending_only_txs)}")
 
 
 if __name__ == "__main__":
