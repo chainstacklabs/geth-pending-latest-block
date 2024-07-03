@@ -1,3 +1,5 @@
+For the full breakdown, see [Understanding the pending block on Ethereum](https://docs.chainstack.com/docs/understanding-pending-block-on-ethereum).
+
 Now let's have a hands-on walkthrough in Python. Here's what we are going to do:
 
 1. Check the version of the node we are connected to.
